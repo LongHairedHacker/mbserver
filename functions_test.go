@@ -16,12 +16,12 @@ func isEqual(a interface{}, b interface{}) bool {
 
 // Function 1
 func TestReadCoils(t *testing.T) {
-	s := NewServer()
+	s := NewServer([]uint8{255})
 	// Set the coil values
-	s.Coils[10] = 1
-	s.Coils[11] = 1
-	s.Coils[17] = 1
-	s.Coils[18] = 1
+	s.Coils[255][10] = 1
+	s.Coils[255][11] = 1
+	s.Coils[255][17] = 1
+	s.Coils[255][18] = 1
 
 	var frame TCPFrame
 	frame.TransactionIdentifier = 1
@@ -50,12 +50,12 @@ func TestReadCoils(t *testing.T) {
 
 // Function 2
 func TestReadDiscreteInputs(t *testing.T) {
-	s := NewServer()
+	s := NewServer([]uint8{255})
 	// Set the discrete input values
-	s.DiscreteInputs[0] = 1
-	s.DiscreteInputs[7] = 1
-	s.DiscreteInputs[8] = 1
-	s.DiscreteInputs[9] = 1
+	s.DiscreteInputs[255][0] = 1
+	s.DiscreteInputs[255][7] = 1
+	s.DiscreteInputs[255][8] = 1
+	s.DiscreteInputs[255][9] = 1
 
 	var frame TCPFrame
 	frame.TransactionIdentifier = 1
@@ -83,10 +83,10 @@ func TestReadDiscreteInputs(t *testing.T) {
 
 // Function 3
 func TestReadHoldingRegisters(t *testing.T) {
-	s := NewServer()
-	s.HoldingRegisters[100] = 1
-	s.HoldingRegisters[101] = 2
-	s.HoldingRegisters[102] = 65535
+	s := NewServer([]uint8{255})
+	s.HoldingRegisters[255][100] = 1
+	s.HoldingRegisters[255][101] = 2
+	s.HoldingRegisters[255][102] = 65535
 
 	var frame TCPFrame
 	frame.TransactionIdentifier = 1
@@ -113,10 +113,10 @@ func TestReadHoldingRegisters(t *testing.T) {
 
 // Function 4
 func TestReadInputRegisters(t *testing.T) {
-	s := NewServer()
-	s.InputRegisters[200] = 1
-	s.InputRegisters[201] = 2
-	s.InputRegisters[202] = 65535
+	s := NewServer([]uint8{255})
+	s.InputRegisters[255][200] = 1
+	s.InputRegisters[255][201] = 2
+	s.InputRegisters[255][202] = 65535
 
 	var frame TCPFrame
 	frame.TransactionIdentifier = 1
@@ -143,13 +143,13 @@ func TestReadInputRegisters(t *testing.T) {
 
 // Function 5
 func TestWriteSingleCoil(t *testing.T) {
-	s := NewServer()
+	s := NewServer([]uint8{0})
 
 	var frame TCPFrame
 	frame.TransactionIdentifier = 1
 	frame.ProtocolIdentifier = 0
 	frame.Length = 12
-	frame.Device = 255
+	frame.Device = 0
 	frame.Function = 5
 	SetDataWithRegisterAndNumber(&frame, 65535, 1024)
 
@@ -162,7 +162,7 @@ func TestWriteSingleCoil(t *testing.T) {
 		t.FailNow()
 	}
 	expect := 1
-	got := s.Coils[65535]
+	got := s.Coils[0][65535]
 	if !isEqual(expect, got) {
 		t.Errorf("expected %v, got %v\n", expect, got)
 	}
@@ -170,7 +170,7 @@ func TestWriteSingleCoil(t *testing.T) {
 
 // Function 6
 func TestWriteHoldingRegister(t *testing.T) {
-	s := NewServer()
+	s := NewServer([]uint8{255})
 
 	var frame TCPFrame
 	frame.TransactionIdentifier = 1
@@ -189,7 +189,7 @@ func TestWriteHoldingRegister(t *testing.T) {
 		t.FailNow()
 	}
 	expect := 6
-	got := s.HoldingRegisters[5]
+	got := s.HoldingRegisters[255][5]
 	if !isEqual(expect, got) {
 		t.Errorf("expected %v, got %v\n", expect, got)
 	}
@@ -197,7 +197,7 @@ func TestWriteHoldingRegister(t *testing.T) {
 
 // Function 15
 func TestWriteMultipleCoils(t *testing.T) {
-	s := NewServer()
+	s := NewServer([]uint8{255})
 
 	var frame TCPFrame
 	frame.TransactionIdentifier = 1
@@ -216,7 +216,7 @@ func TestWriteMultipleCoils(t *testing.T) {
 		t.FailNow()
 	}
 	expect := []byte{1, 1}
-	got := s.Coils[1:3]
+	got := s.Coils[255][1:3]
 	if !isEqual(expect, got) {
 		t.Errorf("expected %v, got %v\n", expect, got)
 	}
@@ -224,7 +224,7 @@ func TestWriteMultipleCoils(t *testing.T) {
 
 // Function 16
 func TestWriteHoldingRegisters(t *testing.T) {
-	s := NewServer()
+	s := NewServer([]uint8{255})
 
 	var frame TCPFrame
 	frame.TransactionIdentifier = 1
@@ -243,7 +243,7 @@ func TestWriteHoldingRegisters(t *testing.T) {
 		t.FailNow()
 	}
 	expect := []uint16{3, 4}
-	got := s.HoldingRegisters[1:3]
+	got := s.HoldingRegisters[255][1:3]
 	if !isEqual(expect, got) {
 		t.Errorf("expected %v, got %v\n", expect, got)
 	}
@@ -268,7 +268,7 @@ func TestUint16ToBytes(t *testing.T) {
 }
 
 func TestOutOfBounds(t *testing.T) {
-	s := NewServer()
+	s := NewServer([]uint8{255})
 
 	var frame TCPFrame
 	frame.TransactionIdentifier = 1

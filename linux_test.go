@@ -27,10 +27,10 @@ func TestModbusRTU(t *testing.T) {
 	defer cmd.Process.Kill()
 
 	// Allow the virutal serial devices to be created.
-	time.Sleep(10 * time.Millisecond)
+	time.Sleep(100 * time.Millisecond)
 
 	// Server
-	s := NewServer()
+	s := NewServer([]uint8{0})
 	err = s.ListenRTU(&serial.Config{
 		Address:  "ttyFOO",
 		BaudRate: 115200,
@@ -64,13 +64,13 @@ func TestModbusRTU(t *testing.T) {
 	client := modbus.NewClient(handler)
 
 	// Coils
-	_, err = client.WriteMultipleCoils(100, 9, []byte{255, 1})
+	_, err = client.WriteMultipleCoils(0, 9, []byte{255, 1})
 	if err != nil {
 		t.Errorf("expected nil, got %v\n", err)
 		t.FailNow()
 	}
 
-	results, err := client.ReadCoils(100, 16)
+	results, err := client.ReadCoils(0, 16)
 	if err != nil {
 		t.Errorf("expected nil, got %v\n", err)
 		t.FailNow()

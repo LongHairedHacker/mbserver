@@ -31,7 +31,7 @@ func serverClientSetup() *serverClient {
 	setup := &serverClient{}
 
 	// Server
-	setup.slave = NewServer()
+	setup.slave = NewServer([]uint8{0})
 	addr := getFreePort()
 	go setup.slave.ListenTCP(addr)
 
@@ -139,7 +139,7 @@ func BenchmarkModbusRead125HoldingRegisters(b *testing.B) {
 // Start a Modbus server and use a client to write to and read from the serer.
 func Example() {
 	// Start the server.
-	serv := NewServer()
+	serv := NewServer([]uint8{0})
 	err := serv.ListenTCP("127.0.0.1:1502")
 	if err != nil {
 		log.Printf("%v\n", err)
@@ -179,10 +179,10 @@ func Example() {
 
 // Override the default ReadDiscreteInputs funtion.
 func ExampleServer_RegisterFunctionHandler() {
-	serv := NewServer()
+	serv := NewServer([]uint8{0})
 
 	// Override ReadDiscreteInputs function.
-	serv.RegisterFunctionHandler(2,
+	serv.RegisterFunctionHandler(0, 2,
 		func(s *Server, frame Framer) ([]byte, *Exception) {
 			register, numRegs, endRegister := registerAddressAndNumber(frame)
 			// Check the request is within the allocated memory
@@ -195,7 +195,7 @@ func ExampleServer_RegisterFunctionHandler() {
 			}
 			data := make([]byte, 1+dataSize)
 			data[0] = byte(dataSize)
-			for i := range s.DiscreteInputs[register:endRegister] {
+			for i := range s.DiscreteInputs[0][register:endRegister] {
 				// Return all 1s, regardless of the value in the DiscreteInputs array.
 				shift := uint(i) % 8
 				data[1+i/8] |= byte(1 << shift)

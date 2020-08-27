@@ -67,6 +67,11 @@ func (frame *RTUFrame) GetFunction() uint8 {
 	return frame.Function
 }
 
+// GetFunction returns the Modbus function code.
+func (frame *RTUFrame) GetSlaveID() uint8 {
+	return frame.Address
+}
+
 // GetData returns the RTUFrame Data byte field.
 func (frame *RTUFrame) GetData() []byte {
 	return frame.Data

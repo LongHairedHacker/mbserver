@@ -64,6 +64,10 @@ func (frame *TCPFrame) GetFunction() uint8 {
 	return frame.Function
 }
 
+func (frame *TCPFrame) GetSlaveID() uint8 {
+	return frame.Device
+}
+
 // GetData returns the TCPFrame Data byte field.
 func (frame *TCPFrame) GetData() []byte {
 	return frame.Data
