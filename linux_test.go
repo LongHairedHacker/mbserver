@@ -30,7 +30,7 @@ func TestModbusRTU(t *testing.T) {
 	time.Sleep(100 * time.Millisecond)
 
 	// Server
-	s := NewServer([]uint8{0})
+	s := NewServer([]uint8{255})
 	err = s.ListenRTU(&serial.Config{
 		Address:  "ttyFOO",
 		BaudRate: 115200,
@@ -52,7 +52,7 @@ func TestModbusRTU(t *testing.T) {
 	handler.DataBits = 8
 	handler.Parity = "N"
 	handler.StopBits = 1
-	handler.SlaveId = 1
+	handler.SlaveId = 255
 	handler.Timeout = 5 * time.Second
 	// Connect manually so that multiple requests are handled in one connection session
 	err = handler.Connect()
